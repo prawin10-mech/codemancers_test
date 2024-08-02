@@ -7,6 +7,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { Product } from "./ProductsTable";
 import Image from "next/image";
 import toast, { Toaster } from "react-hot-toast";
+import Cookies from "js-cookie";
 
 type Inputs = {
   title: string;
@@ -22,6 +23,7 @@ interface IAddProductForm {
 
 export default function AddProductForm({ onClose, product }: IAddProductForm) {
   const { fetchAllProducts } = useAdminContext();
+  const token = Cookies.get("accessToken") || "";
   const [selectedImage, setSelectedImage] = useState<string | null>(
     product ? product.image : null
   );
@@ -51,7 +53,10 @@ export default function AddProductForm({ onClose, product }: IAddProductForm) {
       if (product) {
         const { data } = await axios.put(
           `${process.env.NEXT_PUBLIC_BASE_URL}/product/edit_product/${product._id}`,
-          formData
+          formData,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
         );
         if (data) {
           onClose();
@@ -60,7 +65,10 @@ export default function AddProductForm({ onClose, product }: IAddProductForm) {
       } else {
         const { data } = await axios.post(
           `${process.env.NEXT_PUBLIC_BASE_URL}/product/add_product`,
-          formData
+          formData,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
         );
         if (data) {
           onClose();

@@ -23,7 +23,7 @@ import Image from "next/image";
 import { useAdminContext } from "@/lib/useGlobalContext";
 import toast, { Toaster } from "react-hot-toast";
 
-const notify = () => toast("Here is your toast.");
+import Cookies from "js-cookie";
 
 export interface Product {
   _id: string;
@@ -39,13 +39,17 @@ interface ProductsTable {
 
 export default function ProductsTable({ showDialog }: ProductsTable) {
   const { products, fetchAllProducts } = useAdminContext();
+  const token = Cookies.get("accessToken") || "";
 
   const handleDelete = async (id: string) => {
     try {
       toast
         .promise(
           axios.delete(
-            `${process.env.NEXT_PUBLIC_BASE_URL}/product/delete_product/${id}`
+            `${process.env.NEXT_PUBLIC_BASE_URL}/product/delete_product/${id}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
           ),
           {
             loading: "Product Deleting...",
