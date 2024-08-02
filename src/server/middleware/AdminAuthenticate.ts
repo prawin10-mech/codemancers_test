@@ -12,12 +12,11 @@ const adminAuthenticate = (req: Request, res: Response, next: NextFunction) => {
 
     const token = BearerToken.split(" ")[1];
 
-    console.log(token);
     const user = verify(token, jwtSecret) as {
       id: string;
       role: string;
     };
-    console.log(user);
+
     if (user.role !== "ADMIN") {
       return res.sendStatus(401);
     }

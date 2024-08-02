@@ -2,7 +2,18 @@ import { Request, Response } from "express";
 import multer from "multer";
 import ProductModel from "../models/products.model";
 import MulterStorage from "../helpers/MulterStorage";
+import { v2 as cloudinary } from "cloudinary";
+import dotenv from "dotenv";
+
+dotenv.config();
+
 const upload = multer({ storage: MulterStorage });
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 export const AddProduct = [
   upload.single("image"),
@@ -16,21 +27,19 @@ export const AddProduct = [
         return res.status(400).json({ message: "All fields are required" });
       }
 
-      console.log(image);
+      const uploadResult = await cloudinary.uploader.upload(image, {
+        folder: "products",
+      });
 
-      let imageUrl;
+      const imageUrl = uploadResult.secure_url;
 
-      if (environment === "production") {
-        imageUrl = image.split("/").slice(1).join("/");
-      } else {
-        imageUrl = image.split("\\").slice(1).join("/");
-      }
+      console.log(imageUrl);
 
       const newProduct = new ProductModel({
         title,
         description,
         price,
-        image: `/${imageUrl}`,
+        image: imageUrl,
       });
 
       await newProduct.save();
