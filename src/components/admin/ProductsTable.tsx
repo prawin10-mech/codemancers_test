@@ -47,7 +47,7 @@ export default function ProductsTable({ showDialog }: ProductsTable) {
         .promise(
           axios.delete(
             `${process.env.NEXT_PUBLIC_BASE_URL}/product/delete_product/${id}`,
-            { headers: { Authorization: token } }
+            { headers: { Authorization: `Bearer ${token}` } }
           ),
           {
             loading: "Product Deleting...",
