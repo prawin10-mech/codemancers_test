@@ -15,6 +15,8 @@ export const AddProduct = [
         return res.status(400).json({ message: "All fields are required" });
       }
 
+      console.log(image);
+
       const imageUrl = image.split("\\").slice(1).join("/");
 
       const newProduct = new ProductModel({
