@@ -17,7 +17,7 @@ export const LoginUser = async (req: Request, res: Response) => {
       return res.status(401).json({ message: "Invalid password" });
     }
 
-    const token = await generateJwtToken({ id: user._id });
+    const token = await generateJwtToken({ id: user._id, role: user.role });
 
     res.json({ message: "Login Success", user, token });
   } catch (error) {
