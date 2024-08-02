@@ -8,6 +8,7 @@ export const AddProduct = [
   upload.single("image"),
   async (req: Request, res: Response) => {
     try {
+      const environment = process.env.ENVIRONMENT;
       const { title, description, price } = req.body;
       const image = req.file?.path;
 
@@ -17,7 +18,13 @@ export const AddProduct = [
 
       console.log(image);
 
-      const imageUrl = image.split("\\").slice(1).join("/");
+      let imageUrl;
+
+      if (environment === "production") {
+        imageUrl = image.split("/").slice(1).join("/");
+      } else {
+        imageUrl = image.split("\\").slice(1).join("/");
+      }
 
       const newProduct = new ProductModel({
         title,
